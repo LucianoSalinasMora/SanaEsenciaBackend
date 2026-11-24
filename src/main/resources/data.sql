@@ -25,13 +25,16 @@ INSERT INTO boxes (box_number, name, status, description) VALUES
 (8, 'Box 8 - Consulta Multidisciplinaria', 'disponible', 'Box de atención familiar y consultas compartidas')
 ON CONFLICT (box_number) DO NOTHING;
 
--- Usuarios Iniciales (Contraseña hasheada con BCrypt para 'Admin123' y 'Pass123')
+-- Usuarios Iniciales (Contraseñas hasheadas con BCrypt: 'admin', '1234', 'Admin123' y 'Pass123')
 INSERT INTO users (run, name, email, phone, password_hash, role, specialty) VALUES
-('11111111-1', 'Administrador Sanaesencia', 'admin@sanaesencia.cl', '+56923665073', '$2a$10$w81o9r4WnKrvg9rC3q/dgeIu7XvJ6G7R81y/72vK5M.PqQcsmG72y', 'ADMIN', 'Gestión Clínica'),
-('15234567-8', 'Ps. Rodrigo Morales', 'rmorales@sanaesencia.cl', '+56912345678', '$2a$10$w81o9r4WnKrvg9rC3q/dgeIu7XvJ6G7R81y/72vK5M.PqQcsmG72y', 'PROFESIONAL', 'Psicología Infanto-Juvenil'),
-('16345678-9', 'Flga. Camila Vega', 'cvega@sanaesencia.cl', '+56987654321', '$2a$10$w81o9r4WnKrvg9rC3q/dgeIu7XvJ6G7R81y/72vK5M.PqQcsmG72y', 'PROFESIONAL', 'Fonoaudiología'),
-('17456789-0', 'Nut. Valentina Araya', 'varaya@sanaesencia.cl', '+56976543210', '$2a$10$w81o9r4WnKrvg9rC3q/dgeIu7XvJ6G7R81y/72vK5M.PqQcsmG72y', 'PROFESIONAL', 'Nutrición Integrativa'),
-('18567890-1', 'Constanza Silva', 'paciente@test.cl', '+56911223344', '$2a$10$w81o9r4WnKrvg9rC3q/dgeIu7XvJ6G7R81y/72vK5M.PqQcsmG72y', 'PACIENTE', '')
+('admin', 'Administrador Centro Sanaesencia', 'admin@sanaesencia.cl', '+56923665073', '$2a$10$4CXqaQqpEDrzryJuEeBJRODdzAqT0V/hDGb1zBKTOuXpmTMk.n9/.', 'ADMIN', 'Gestión Clínica'),
+('11111111-1', 'Administrador Sanaesencia (RUT)', 'admin.rut@sanaesencia.cl', '+56923665073', '$2a$10$5qQhZ5xDHIG0Y0vfHZZU5.RiM43ou33Xa.QtIYzlnDpwelng.OzMC', 'ADMIN', 'Gestión Clínica'),
+('20000001-3', 'Dra. Keilen Sánchez Ríos', 'keilen.sanchez@sanaesencia.cl', '+56923665073', '$2a$10$X1KAlbCLRFpEzBCadDTPg.Fp.yqhEc2PudK7JZakAuY9ISrAK/YIG', 'PROFESIONAL', 'Medicina General y Salud Mental'),
+('15234567-8', 'Ps. Rodrigo Morales', 'rmorales@sanaesencia.cl', '+56912345678', '$2a$10$KnoTGcvA1U2BhvMgrIi7Mu254HdudzFdLUI17MoPMx.zOPgPYjLzm', 'PROFESIONAL', 'Psicología Infanto-Juvenil'),
+('16345678-9', 'Flga. Camila Vega', 'cvega@sanaesencia.cl', '+56987654321', '$2a$10$KnoTGcvA1U2BhvMgrIi7Mu254HdudzFdLUI17MoPMx.zOPgPYjLzm', 'PROFESIONAL', 'Fonoaudiología'),
+('17456789-0', 'Nut. Valentina Araya', 'varaya@sanaesencia.cl', '+56976543210', '$2a$10$KnoTGcvA1U2BhvMgrIi7Mu254HdudzFdLUI17MoPMx.zOPgPYjLzm', 'PROFESIONAL', 'Nutrición Integrativa'),
+('20000100-1', 'Paciente de Prueba', 'paciente@correo.com', '+56987654321', '$2a$10$X1KAlbCLRFpEzBCadDTPg.Fp.yqhEc2PudK7JZakAuY9ISrAK/YIG', 'PACIENTE', ''),
+('18567890-1', 'Constanza Silva', 'paciente@test.cl', '+56911223344', '$2a$10$KnoTGcvA1U2BhvMgrIi7Mu254HdudzFdLUI17MoPMx.zOPgPYjLzm', 'PACIENTE', '')
 ON CONFLICT (run) DO NOTHING;
 
 -- Catálogo de Productos Terapéuticos

@@ -5,6 +5,7 @@ public class RunValidator {
     public static boolean isValidRun(String run) {
         if (run == null) return false;
         String clean = run.replace(".", "").replace("-", "").trim().toUpperCase();
+        if ("ADMIN".equals(clean)) return true;
         if (clean.length() < 8 || clean.length() > 9) return false;
 
         String body = clean.substring(0, clean.length() - 1);
@@ -26,6 +27,7 @@ public class RunValidator {
     public static String normalizeRun(String run) {
         if (run == null) return null;
         String clean = run.replace(".", "").replace("-", "").trim().toUpperCase();
+        if ("ADMIN".equals(clean)) return "admin";
         if (clean.length() < 2) return clean;
         String body = clean.substring(0, clean.length() - 1);
         char dv = clean.charAt(clean.length() - 1);

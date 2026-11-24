@@ -94,6 +94,49 @@ public class UserService {
                 .toList();
     }
 
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    @Transactional
+    public UserDto updateUser(String run, UserDto dto) {
+        String normalizedRun = RunValidator.normalizeRun(run);
+        User user = userRepository.findById(normalizedRun)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con RUN: " + run));
+
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            user.setName(dto.getName().trim());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            user.setEmail(dto.getEmail().trim());
+        }
+        if (dto.getPhone() != null) {
+            user.setPhone(dto.getPhone().trim());
+        }
+        if (dto.getSpecialty() != null) {
+            user.setSpecialty(dto.getSpecialty().trim());
+        }
+        if (dto.getRole() != null && !dto.getRole().isBlank()) {
+            user.setRole(dto.getRole().toUpperCase().trim());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        User updated = userRepository.save(user);
+        return toDto(updated);
+    }
+
+    @Transactional
+    public void deleteUser(String run) {
+        String normalizedRun = RunValidator.normalizeRun(run);
+        if (userRepository.existsById(normalizedRun)) {
+            userRepository.deleteById(normalizedRun);
+        }
+    }
+
     public UserDto toDto(User user) {
         return UserDto.builder()
                 .run(user.getRun())

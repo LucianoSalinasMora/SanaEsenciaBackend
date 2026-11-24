@@ -21,7 +21,7 @@ public class Review {
     @Column(name = "patient_name", length = 120, nullable = false)
     private String patientName;
 
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", length = 4000, nullable = false)
     private String content;
 
     @Column(name = "rating", nullable = false)

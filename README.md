@@ -1,6 +1,6 @@
 # Sanaesencia Backend - Microservicios & API REST
 
-Backend para la plataforma y aplicación móvil del **Centro Integrativo Sanaesencia** (Los Vilos, Chile), desarrollado en **Spring Boot 3.3.x** con **Java 21**, **Spring Data JPA**, **Spring Security (JWT)** y **PostgreSQL**.
+Backend para la plataforma y aplicación móvil del **Centro Integrativo Sanaesencia** (Los Vilos, Chile), desarrollado en **Spring Boot 3.3.x** con **Java 21**, **Spring Data JPA**, **Spring Security (JWT)** y base de datos en la nube **Oracle Autonomous Database** (con soporte opcional para PostgreSQL y H2).
 
 ---
 
@@ -8,22 +8,22 @@ Backend para la plataforma y aplicación móvil del **Centro Integrativo Sanaese
 
 - **Java JDK 21** o superior.
 - **Maven 3.9+** (o ejecutar con el Maven de IntelliJ / Maven wrapper).
-- **PostgreSQL 14+** (opcional para desarrollo local; se puede usar fallback en memoria o contenedor).
+- **Oracle Wallet** (ubicada en la carpeta `wallet/` del proyecto para autenticación mTLS con Oracle Cloud).
 
 ---
 
-## 📦 Configuración y Base de Datos
+## 📦 Configuración y Base de Datos (Oracle Autonomous Cloud)
 
-Las propiedades se configuran en `src/main/resources/application.yml` o mediante variables de entorno:
+La conexión a la base de datos Oracle Autonomous Database en la nube se encuentra configurada en `src/main/resources/application.yml` mediante Oracle Wallet (mTLS):
 
 | Variable | Descripción | Valor por Defecto |
 | :--- | :--- | :--- |
-| `SPRING_DATASOURCE_URL` | URL JDBC de conexión | `jdbc:postgresql://localhost:5432/sanaesencia` |
-| `SPRING_DATASOURCE_USERNAME` | Usuario de base de datos | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Contraseña | `postgres` |
+| `SPRING_DATASOURCE_URL` | URL JDBC con Oracle Wallet | `jdbc:oracle:thin:@sanaescencia_high?TNS_ADMIN=wallet` |
+| `SPRING_DATASOURCE_USERNAME` | Usuario administrador | `ADMIN` |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña | `Bms163163163.` |
 | `SERVER_PORT` | Puerto de escucha | `8080` |
 
-Al iniciar, el sistema ejecuta automáticamente `src/main/resources/data.sql` con los datos semilla oficiales (información institucional, los 8 boxes de Los Vilos, usuarios iniciales con contraseñas BCrypt, catálogo de productos naturales y testimonios).
+Al iniciar, el componente `DataInitializer` verifica y realiza el sembrado automático de datos en Oracle (información institucional, los 8 boxes de Los Vilos, usuarios iniciales con contraseñas BCrypt, catálogo de productos naturales y testimonios).
 
 ---
 

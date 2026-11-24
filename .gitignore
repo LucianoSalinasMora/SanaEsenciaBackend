@@ -37,3 +37,8 @@ build/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Oracle Wallet & Credentials ###
+wallet/
+**/src/main/resources/wallet/
+

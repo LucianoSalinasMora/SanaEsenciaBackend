@@ -3,10 +3,17 @@ spring:
     name: sanaesencia-backend
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sanaesencia}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:oracle:thin:@sanaescencia_high?TNS_ADMIN=wallet}
+    username: ${SPRING_DATASOURCE_USERNAME:ADMIN}
+    password: ${SPRING_DATASOURCE_PASSWORD:Bms163163163.}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      pool-name: SanaesenciaOraclePool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 30000
 
   jpa:
     hibernate:
@@ -15,13 +22,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        globally_quoted_identifiers: true
     defer-datasource-initialization: true
 
   sql:
     init:
-      mode: always
-      data-locations: classpath:data.sql
+      mode: never
 
 server:
   port: 8080

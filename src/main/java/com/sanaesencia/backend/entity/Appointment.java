@@ -67,7 +67,7 @@ public class Appointment {
     @Builder.Default
     private String state = "PENDIENTE";
 
-    @Column(name = "patient_notes", columnDefinition = "TEXT")
+    @Column(name = "patient_notes", length = 4000)
     @Builder.Default
     private String patientNotes = "";
 

@@ -19,7 +19,7 @@ public class AboutInfo {
     @Column(name = "center_title", length = 150, nullable = false)
     private String centerTitle;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description", length = 4000, nullable = false)
     private String description;
 
     @Column(name = "address", length = 200, nullable = false)

@@ -45,9 +45,28 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByRun(run));
     }
 
+    @Operation(summary = "Listar todos los usuarios", description = "Obtiene todos los usuarios registrados en el sistema")
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @Operation(summary = "Listar usuarios por rol", description = "Filtra usuarios por su rol (PACIENTE, PROFESIONAL, ADMIN)")
     @GetMapping("/role/{role}")
     public ResponseEntity<List<UserDto>> getUsersByRole(@PathVariable String role) {
         return ResponseEntity.ok(userService.getUsersByRole(role));
+    }
+
+    @Operation(summary = "Actualizar usuario", description = "Actualiza datos personales o de profesional por su RUN")
+    @PutMapping("/{run}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable String run, @RequestBody UserDto request) {
+        return ResponseEntity.ok(userService.updateUser(run, request));
+    }
+
+    @Operation(summary = "Eliminar usuario", description = "Elimina un usuario por su RUN")
+    @DeleteMapping("/{run}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String run) {
+        userService.deleteUser(run);
+        return ResponseEntity.noContent().build();
     }
 }

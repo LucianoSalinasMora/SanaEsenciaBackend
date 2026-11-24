@@ -32,4 +32,11 @@ public class ProductController {
         ProductDto saved = productService.createOrUpdateProduct(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
+
+    @Operation(summary = "Eliminar producto", description = "Elimina un producto por su ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }

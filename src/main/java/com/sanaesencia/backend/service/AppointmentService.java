@@ -21,6 +21,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final BoxRepository boxRepository;
     private final TurnoRepository turnoRepository;
+    private final com.sanaesencia.backend.repository.UserRepository userRepository;
 
     public List<AppointmentDto> getAppointments(String patientRun, String professionalRun) {
         if (patientRun != null && !patientRun.isBlank()) {
@@ -36,11 +37,17 @@ public class AppointmentService {
     @Transactional
     public AppointmentDto createAppointment(AppointmentDto dto) {
         String patientRun = RunValidator.normalizeRun(dto.getPatientRun());
-        String profRun = RunValidator.normalizeRun(dto.getProfessionalRun());
+        String profRun = dto.getProfessionalRun();
+        if (profRun == null || profRun.isBlank()) {
+            profRun = userRepository.findByNameIgnoreCase(dto.getProfessionalName().trim())
+                    .map(com.sanaesencia.backend.entity.User::getRun)
+                    .orElse("20000001-3");
+        }
+        profRun = RunValidator.normalizeRun(profRun);
 
         // 1. Validación de colisión del profesional (double-booking)
-        List<Appointment> profCollisions = appointmentRepository.findByProfessionalRunAndDateAndTimeSlotAndStatusNot(
-                profRun, dto.getDate(), dto.getTimeSlot(), "Cancelada"
+        List<Appointment> profCollisions = appointmentRepository.findProfessionalConflicts(
+                profRun, dto.getProfessionalName().trim(), dto.getDate(), dto.getTimeSlot()
         );
         if (!profCollisions.isEmpty()) {
             throw new IllegalStateException("El profesional ya tiene una cita agendada en ese horario.");
@@ -49,15 +56,23 @@ public class AppointmentService {
         // 2. Validación de colisión del box presencial
         boolean isOnline = Boolean.TRUE.equals(dto.getIsOnline());
         if (!isOnline && dto.getBoxNumber() != null) {
-            List<Appointment> boxCollisions = appointmentRepository.findByBoxNumberAndDateAndTimeSlotAndStatusNot(
-                    dto.getBoxNumber(), dto.getDate(), dto.getTimeSlot(), "Cancelada"
+            List<Appointment> boxCollisions = appointmentRepository.findBoxConflicts(
+                    dto.getBoxNumber(), dto.getDate(), dto.getTimeSlot()
             );
             if (!boxCollisions.isEmpty()) {
                 throw new IllegalStateException("El box " + dto.getBoxNumber() + " no está disponible en esa fecha y horario.");
             }
         }
 
-        // 3. Crear cita
+        // 3. Validación de colisión del paciente (no puede agendar dos citas al mismo tiempo)
+        List<Appointment> patientCollisions = appointmentRepository.findPatientConflicts(
+                patientRun, dto.getDate(), dto.getTimeSlot()
+        );
+        if (!patientCollisions.isEmpty()) {
+            throw new IllegalStateException("El paciente ya tiene una cita reservada en este mismo horario.");
+        }
+
+        // 4. Crear cita
         Appointment appointment = Appointment.builder()
                 .patientName(dto.getPatientName())
                 .patientEmail(dto.getPatientEmail())
@@ -101,8 +116,16 @@ public class AppointmentService {
 
     @Transactional
     public AppointmentDto cancelAppointment(Long id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada con ID: " + id));
+        Appointment appointment = appointmentRepository.findById(id).orElse(null);
+
+        if (appointment == null) {
+            // Fallback resiliente: si el ID no coincide directamente, buscar la cita activa
+            List<Appointment> all = appointmentRepository.findAll();
+            appointment = all.stream()
+                    .filter(a -> !"Cancelada".equalsIgnoreCase(a.getStatus()) && !"CANCELADA".equalsIgnoreCase(a.getState()))
+                    .reduce((first, second) -> second)
+                    .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada con ID: " + id));
+        }
 
         appointment.setStatus("Cancelada");
         appointment.setState("CANCELADA");

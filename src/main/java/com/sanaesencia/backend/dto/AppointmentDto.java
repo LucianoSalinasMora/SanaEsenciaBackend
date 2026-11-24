@@ -28,8 +28,8 @@ public class AppointmentDto {
     @NotBlank(message = "El RUN del paciente es obligatorio")
     private String patientRun;
 
-    @NotBlank(message = "El RUN del profesional es obligatorio")
-    private String professionalRun;
+    @Builder.Default
+    private String professionalRun = "";
 
     @NotBlank(message = "El nombre del profesional es obligatorio")
     private String professionalName;
@@ -40,6 +40,31 @@ public class AppointmentDto {
     @NotNull(message = "La fecha es obligatoria")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+
+    @com.fasterxml.jackson.annotation.JsonSetter("date")
+    public void setDateFlexible(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) {
+            this.date = null;
+            return;
+        }
+        String clean = dateStr.trim();
+        try {
+            if (clean.contains("/")) {
+                String[] parts = clean.split("/");
+                if (parts.length == 3) {
+                    if (parts[0].length() == 4) {
+                        this.date = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    } else {
+                        this.date = LocalDate.of(Integer.parseInt(parts[2]), Integer.parseInt(parts[1]), Integer.parseInt(parts[0]));
+                    }
+                    return;
+                }
+            }
+            this.date = LocalDate.parse(clean);
+        } catch (Exception e) {
+            this.date = null;
+        }
+    }
 
     @NotBlank(message = "El bloque horario es obligatorio")
     private String timeSlot;

@@ -46,6 +46,13 @@ public class ProductService {
         return toDto(productRepository.save(product));
     }
 
+    @Transactional
+    public void deleteProduct(Integer id) {
+        if (id != null && productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+        }
+    }
+
     public ProductDto toDto(Product p) {
         return ProductDto.builder()
                 .id(p.getId())
